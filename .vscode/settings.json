@@ -1,0 +1,17 @@
+{
+  "files.eol": "\n",
+  "editor.tabSize": 2,
+  "editor.useTabStops": false,
+  "deno.enable": true,
+  "deno.lint": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true,
+    "source.fixAll": true
+  },
+  "deno.suggest.imports.hosts": {
+    "https://deno.land": true,
+    "https://raw.githubusercontent.com": false
+  }
+}
