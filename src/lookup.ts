@@ -1,4 +1,4 @@
-import { cheerio } from 'https://deno.land/x/cheerio@1.0.4/mod.ts';
+import nodeHTMLParser from 'https://esm.sh/node-html-parser';
 
 export async function lookup(number: string): Promise<Result[]> {
   const result = await fetch(`https://www.dastelefonbuch.de/R%C3%BCckw%C3%A4rts-Suche/${number}`);
@@ -9,17 +9,13 @@ export async function lookup(number: string): Promise<Result[]> {
     throw new Error('Result not okay');
   }
   const text = await result.text();
-  const $ = cheerio.load(text);
-  const nameElements = $('div.name[title]');
-  const results = Array.from(
-    nameElements.map((_i, v) => {
-      if (v.type === 'text') return;
-      if (v.parent.type === 'text') return;
-      const isPrivate = v.parent.attribs.itemtype === 'http://schema.org/Person';
-      const type = isPrivate ? 'person' : 'company';
-      return { name: v.attribs.title, type };
-    })
-  ) as unknown as Result[];
+  const dom = nodeHTMLParser(text);
+  const nameElements = dom.querySelectorAll('div.name[title]');
+  const results = nameElements.map((v) => {
+    const isPrivate = v.parentNode.attributes.itemtype == 'http://schema.org/Person';
+    const type = isPrivate ? 'person' : 'company';
+    return { name: v.attributes.title, type } as Result
+  });
   return results;
 }
 
